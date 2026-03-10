@@ -12,25 +12,25 @@ const Sidebar = () => {
                       <Link to="/admin/dashboard">Dashboard</Link>
                     </li>
                     <li>
-                      <Link to="/admin/show">Categories</Link>
+                      <Link to="/admin/categories">Categories</Link>
                     </li>
                      <li>
-                      <a href="">Brands</a>
+                      <Link to="/admin/brand">Brands</Link>
                     </li>
                     <li>
-                      <a href="">Products</a>
+                      <Link to="/admin/products">Products</Link>
                     </li>
                     <li>
-                      <a href="">Orders</a>
+                      <Link to="/admin/orders">Orders</Link>
                     </li>
                      <li>
-                      <a href="">Users</a>
+                      <Link to="/admin/users">Users</Link>
                     </li>
                     <li>
-                      <a href="">Shipping</a>
+                      <Link to="/admin/shipping">Shipping</Link>
                     </li>
                     <li>
-                      <a href="">Change Password</a>
+                      <Link to="/admin/change-password">Change Password</Link>
                     </li>
                      <li>
                       <a href="#" onClick={logout}>Logout</a>

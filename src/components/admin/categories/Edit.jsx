@@ -57,7 +57,7 @@ const Edit = () => {
             if (result.status === 200) {
                 setLoading(false);
                 toast.success(result.message);
-                navigate('/admin/show');
+                navigate('/admin/categories');
             } else {
                 setLoading(false);
                 toast.error(result.message || "something went wrong!");
@@ -74,7 +74,7 @@ const Edit = () => {
         <div className="row">
           <div className="d-flex justify-content-between mt-5 pb-3">
             <h4 className='h4  mb-0'>Category/Edit</h4>
-            <Link to="/admin/show" className="btn btn-primary">Back</Link>
+            <Link to="/admin/categories" className="btn btn-primary">Back</Link>
           </div>
           <div className="col-md-3">
           <Sidebar/>

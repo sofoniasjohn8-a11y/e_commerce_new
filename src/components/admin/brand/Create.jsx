@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
-import Layout from '../../common/Layout'
-import Sidebar from '../../common/Sidebar'
-import { useForm } from 'react-hook-form'
-import { adminToken, apiUrl } from '../../common/http'
-import { toast } from 'react-toastify'
-
+import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { adminToken, apiUrl } from '../../common/http';
+import Layout from '../../common/Layout';
+import Sidebar from '../../common/Sidebar';
+import { toast } from 'react-toastify';
 
 const Create = () => {
-    const [loading,setLoading] = useState(false);
+ const [loading,setLoading] = useState(false);
     const navigate = useNavigate();
      const {
         register,
@@ -32,7 +31,7 @@ const Create = () => {
             if(result.status == 200){
                 setLoading(false);
                 toast.success(result.message);
-                navigate('/admin/show');
+                navigate('/admin/brand');
             }
             else
                 console.log("something went wrong!");
@@ -43,8 +42,8 @@ const Create = () => {
         <div className="container">
         <div className="row">
           <div className="d-flex justify-content-between mt-5 pb-3">
-            <h4 className='h4  mb-0'>Category/Create</h4>
-            <Link to="/admin/categories" className="btn btn-primary">Back</Link>
+            <h4 className='h4  mb-0'>Brand/Create</h4>
+            <Link to="/admin/brand" className="btn btn-primary">Back</Link>
           </div>
           <div className="col-md-3">
           <Sidebar/>
