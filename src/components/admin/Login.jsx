@@ -17,9 +17,6 @@ const Login = () => {
   } = useForm()
     const navigate = useNavigate();
   const onSubmit = async (data) =>{
-
-
-
     const res = await fetch(`${apiUrl}/admin/login`,{
         method:'POST',
         headers:{

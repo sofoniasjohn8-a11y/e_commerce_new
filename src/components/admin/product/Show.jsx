@@ -54,6 +54,7 @@ const Show = () => {
                   });
                   const result = await res.json();
                   if (result.status === 200) {
+                    console.log(result);
                       toast.success(result.message);
                       // Refetch products to update the list
                       FetchProducts();
@@ -104,9 +105,11 @@ const Show = () => {
                     {products.map((product) => (
                       <tr key={product.id}>
                         <td>#{product.id}</td>
-                        <td>{product.name}</td>
+                        <td>{
+                            <img src={product.image_url} alt={product.title} width="50"/>
+                            }</td>
                         <td>${product.title}</td>
-                        <td>${product.price.toFixed(2)}</td>
+                        <td>${product.price}</td>
                         <td>{product.qty}</td>
                         <td>{product.sku}</td>
                         <td>{product.status == 1 ? <span className="badge bg-success">Active</span> : <span className="badge bg-danger">Inactive</span>}</td>
