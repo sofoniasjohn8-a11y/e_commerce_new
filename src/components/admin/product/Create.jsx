@@ -13,8 +13,11 @@ import JoditEditor from 'jodit-react';
 const Create = ({ placeholder }) => {
 
   const [loading,setLoading] = useState(false);
+  const [disabled,setDisabled] = useState(false);
   const [categories,setCategories] = useState([]);
   const [brands,setBrands] = useState([]);
+  const [gallery,setGallery] = useState([]);
+  const [galleryImages,setGalleryImages] = useState([]);
   const navigate = useNavigate();
   const editor = useRef(null);
   const [content, setContent] = useState('');
@@ -35,7 +38,8 @@ const Create = ({ placeholder }) => {
     } = useForm();
 
     const saveProduct = async (data) =>{
-        console.log(data);
+      const formData = {...data,"gallery":gallery};
+        console.log(formData);
         setLoading(true);
         const res =  await fetch(`${apiUrl}/products`,{
             'method':'POST',
@@ -44,8 +48,8 @@ const Create = ({ placeholder }) => {
                 'Accept':'application/json',
                 'Authorization':`Bearer ${adminToken()}`
             },
-               body : JSON.stringify(data)
-            }).then(res =>res.json(data))
+               body : JSON.stringify(formData)
+            }).then(res =>res.json(formData))
             .then(result => {
             if(result.status == 200){
                 setLoading(false);
@@ -108,6 +112,48 @@ const Create = ({ placeholder }) => {
                 toast.error("Failed to load brands");
             }
           }
+      const handleFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    setDisabled(true);
+
+    try {
+        const res = await fetch(`${apiUrl}/temp-images`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${adminToken()}`
+            },
+            body: formData
+        });
+
+        const result = await res.json();
+
+        if (res.status === 200) {
+            setDisabled(false);
+            setGallery(prevGallery => [...prevGallery, result.image_id]); 
+            galleryImages.push(result.image_url);
+            setGalleryImages(galleryImages);
+            console.log(galleryImages);
+            e.target.value = "";
+        } else {
+            setDisabled(false);
+            toast.error(result.message || "Upload failed");
+        }
+    } catch (error) {
+        setDisabled(false);
+        console.error("Upload error:", error);
+        toast.error("An error occurred during upload");
+    }
+}
+    const DeleteImage = async (image) => {
+       const newGalleryImages = galleryImages.filter(img => img !== image);
+      setGalleryImages(newGalleryImages);
+    }     
       useEffect(() => {
         FetchCategories();
         FetchBrands();
@@ -209,7 +255,7 @@ const Create = ({ placeholder }) => {
                     <div className="mb-">
                       <label htmlFor="" className="form-label">Description</label>
                        <Controller
-                        name="description" // The key in your form data
+                        name = "description" // The key in your form data
                         control={control}
                         rules={{ required: 'Content is required' }}
                         render={({ field: { onChange, value } }) => (
@@ -252,16 +298,11 @@ const Create = ({ placeholder }) => {
                         <div className="mb-3">
                           <label htmlFor="" className="form-label">Discounted Price</label>
                           <input type="text"  
-                           {...register('discountedPrice', {
-                          required: 'The discounted price is required'
-                        })}
+                          
                         placeholder="Discounted Price"
-                        className={`form-control ${errors.discountedPrice && 'is-invalid'}`}
+                        className={'form-control '}
                         row="3"
                       />
-                      {errors.discountedPrice && (
-                        <p className="invalid-feedback">{errors.discountedPrice.message}</p>
-                        )}
                         </div>
                       </div>
                     </div>
@@ -287,16 +328,12 @@ const Create = ({ placeholder }) => {
                         <div className="mb-3">
                           <label htmlFor="" className="form-label">Barcode</label>
                          <input type="text"  
-                           {...register('barcode', {
-                          required: 'The barcode is required'
-                        })}
+                          
                         placeholder="Barcode"
-                        className={`form-control ${errors.barcode && 'is-invalid'}`}
+                        className='form-control'
                         row="3"
                       />
-                      {errors.barcode && (
-                        <p className="invalid-feedback">{errors.barcode.message}</p>
-                        )}
+                      
                         </div>
                       </div>
                     </div>
@@ -306,8 +343,8 @@ const Create = ({ placeholder }) => {
                         <div className="mb-3">
                           <label htmlFor="" className="form-label">Qty</label>
                          <input type="text"  
-                           {...register('qty', {
-                          required: 'The quantity is required'
+                            {...register('qty', {
+                          required: 'The Qty is required'
                         })}
                         placeholder="Quantity"
                         className={`form-control ${errors.qty && 'is-invalid'}`}
@@ -340,11 +377,37 @@ const Create = ({ placeholder }) => {
                     </div>
                     <div className="mb-3">
                       <label htmlFor="" className="form-label">Image</label>
-                      <input type="file" className="form-control" />
+                      <input type="file" 
+                      onChange = {handleFile}
+                      className="form-control" />
+                    </div>
+                    <div className="mb-3">
+                      <div className="row">
+                       {
+                         galleryImages && galleryImages.map((image,index) => {
+                          return (
+                            <div className="col-md-3 mb-3" key={index}>
+                              <div className="card shadow">
+                                <img src={image} alt={`Gallery-${index}`} className="w-100" />
+                                
+                              </div>
+                              <div className="card footer mt-2">
+                                  <button 
+                                    type="button"
+                                    className="btn btn-danger"
+                                    onClick={() => DeleteImage(image)}>
+                                      Delete
+                                    </button>
+                              </div>
+                            </div>
+                          )
+                       })
+                      }
+                      </div>
                     </div>
                 </div>
             </div>
-           <button className="btn btn-primary mt-3">Create</button>
+           <button className="btn btn-primary mt-3" onClick={() => saveProduct()}>Create</button>
          </form>
             
             </div>
