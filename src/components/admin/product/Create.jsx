@@ -11,7 +11,7 @@ import JoditEditor from 'jodit-react';
 
 
 const Create = ({ placeholder }) => {
-
+  
   const [loading,setLoading] = useState(false);
   const [disabled,setDisabled] = useState(false);
   const [categories,setCategories] = useState([]);
