@@ -2,7 +2,7 @@ import React, { useEffect, useState , useRef, useMemo} from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Layout from '../../common/Layout';
 import Sidebar from '../../common/Sidebar';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { adminToken, apiUrl } from '../../common/http';
 import { toast } from 'react-toastify';
 import { Controller } from 'react-hook-form';
@@ -226,19 +226,75 @@ const Edit = ({ placeholder }) => {
            toast.error("An error occurred during upload");
        }
    }
-       const DeleteImage = async (image_url) => {
-        console.log(`Deleting image: ${image_url}`);
-        console.log("Current gallery images before deletion:", galleryImages);
-          const newGalleryImages = galleryImages.filter(img => img !== image_url);
-        console.log("Gallery images after filtering:", newGalleryImages);
-        
-         setGalleryImages(newGalleryImages);
-       }     
-         useEffect(() => {
-           FetchCategories();
-           FetchBrands();
-        //    FetchProducts();
-         }, []);
+       const DeleteImage = async (image_url,id) => {
+    //  try {
+    //        const res = await fetch(`${apiUrl}/temp-images/${id}`, {
+    //            method: 'DELETE',
+    //            headers: {
+    //                 'Content-Type': 'application/json',
+    //                'Accept': 'application/json',
+    //                'Authorization': `Bearer ${adminToken()}`
+    //            },
+               
+    //        });
+   
+    //        const result = await res.json();
+   
+    //        if (res.status === 200) {
+    //           //  setDisabled(false);
+    //           //  setGallery(prevGallery => [...prevGallery, result.image_id]); 
+    //           //  galleryImages.push(result.image_url);
+    //           //  setGalleryImages(galleryImages);
+    //           //  console.log(galleryImages);
+    //           //  e.target.value = "";
+    //        } else {
+    //            setDisabled(false);
+    //            toast.error(result.message || "deleting is  failed");
+    //        }
+    //    } catch (error) {
+    //       // setDisabled(false);
+    //        console.error("delete error:", error);
+    //       // toast.error("An error occurred during upload");
+    //    }
+    const newProductImages = productImages.filter(img => img.image_url !== image_url);
+    setProductImages(newProductImages);
+    // const newGalleryImages = galleryImages.filter(img => img !== image_url);
+    // setGalleryImages(newGalleryImages);
+    
+    console.log(`Deleted: ${image_url}`);
+};   
+const SetDefaultImage = async (pro_img_id) => {
+  try {
+           const res = await fetch(`${apiUrl}/products/setDDefaultImage/${pro_img_id}`, {
+               method: 'PUT',
+               headers: {
+                    'Content-Type': 'application/json',
+                   'Accept': 'application/json',
+                   'Authorization': `Bearer ${adminToken()}`
+               },
+               
+           });
+   
+           const result = await res.json();
+   
+           if (res.status === 200) {
+              //  setDisabled(false);
+              //  setGallery(prevGallery => [...prevGallery, result.image_id]); 
+              //  galleryImages.push(result.image_url);
+              //  setGalleryImages(galleryImages);
+              //  console.log(galleryImages);
+              //  e.target.value = "";
+              toast.success(result.message || "Default image set successfully");
+           } else {
+              //  setDisabled(false);
+               toast.error(result.message || "default image setting failed");
+           }
+       } catch (error) {
+          //  setDisabled(false);
+          //  console.error("Upload error:", error);
+           toast.error("An error occurred during setting default image");
+       }
+}
         
          
   return (
@@ -495,9 +551,16 @@ const Edit = ({ placeholder }) => {
                               <div className="card footer mt-2">
                                   <button 
                                     type="button"
-                                    className="btn btn-danger"
-                                    onClick={() => DeleteImage(productImage.image_url)}>
+                                    className="btn btn-danger mb-1"
+                                    onClick={() => DeleteImage(productImage.image_url,productImage.id)}>
                                       Delete
+                                    </button>
+
+                                    <button 
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={() => SetDefaultImage(productImage.id)}>
+                                      Set Default Image
                                     </button>
                               </div>
                             </div>
@@ -508,7 +571,7 @@ const Edit = ({ placeholder }) => {
                     </div>
                 </div>
             </div>
-           <button className="btn btn-primary mt-3" onClick={() => saveProduct()}>Create</button>
+           <button className="btn btn-primary mt-3" onClick={() => saveProduct()}>Update</button>
          </form>
             
             </div>
