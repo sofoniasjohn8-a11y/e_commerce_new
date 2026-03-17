@@ -18,6 +18,8 @@ const Create = ({ placeholder }) => {
   const [brands,setBrands] = useState([]);
   const [gallery,setGallery] = useState([]);
   const [galleryImages,setGalleryImages] = useState([]);
+  const [temp_images,setTemp_images] = useState([]);
+  // const [image_id,setImageId] = useState(null);
   const navigate = useNavigate();
   const editor = useRef(null);
   const [content, setContent] = useState('');
@@ -118,7 +120,6 @@ const Create = ({ placeholder }) => {
 
     const formData = new FormData();
     formData.append('image', file);
-    
     setDisabled(true);
 
     try {
@@ -135,29 +136,59 @@ const Create = ({ placeholder }) => {
 
         if (res.status === 200) {
             setDisabled(false);
-            setGallery(prevGallery => [...prevGallery, result.image_id]); 
-            galleryImages.push(result.image_url);
-            setGalleryImages(galleryImages);
-            console.log(galleryImages);
+            // Add the ID to the hidden gallery input array
+            setGallery(prev => [...prev, result.image_id]); 
+            
+            // Add an object to the preview state
+            setGalleryImages(prev => [...prev, { 
+                id: result.image_id, 
+                url: result.image_url 
+            }]);
+
             e.target.value = "";
-        } else {
-            setDisabled(false);
-            toast.error(result.message || "Upload failed");
         }
     } catch (error) {
         setDisabled(false);
-        console.error("Upload error:", error);
         toast.error("An error occurred during upload");
     }
 }
-    const DeleteImage = async (image) => {
-       const newGalleryImages = galleryImages.filter(img => img !== image);
-      setGalleryImages(newGalleryImages);
-    }     
+    const DeleteImage = async (imgObject) => {
+    if (!window.confirm("Are you sure you want to delete this image?")) return;
+    
+    try {
+        const res = await fetch(`${apiUrl}/temp-images/${imgObject.id}`, {
+            method: 'DELETE', // Standard Laravel destroy method uses DELETE
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${adminToken()}`
+            }
+        });
+
+        const result = await res.json();
+
+        if (res.status === 200) {
+            // 1. Remove from UI preview
+            setGalleryImages(galleryImages.filter(img => img.id !== imgObject.id));
+            
+            // 2. Remove from the gallery IDs array that gets sent with the form
+            setGallery(gallery.filter(id => id !== imgObject.id));
+            
+            toast.success(result.message);
+        } else {
+            toast.error(result.message || "Deletion failed");
+        }
+    } catch (error) {
+        console.error("Delete error:", error);
+        toast.error("An error occurred during deletion");
+    }
+}
       useEffect(() => {
         FetchCategories();
         FetchBrands();
+        
       }, []);
+
+    
   return (
   <Layout>
         <div className="container">
@@ -373,6 +404,23 @@ const Create = ({ placeholder }) => {
                             }
                         </div>
                       </div>
+                      <div className="mb-3">
+                          <label className="form-label">Is Featured?</label>
+                          <Controller
+                              name="is_featured"
+                              control={control}
+                              render={({ field }) => (
+                                  <select 
+                                      {...field} // This handles value, onChange, onBlur, and ref
+                                      className="form-control"
+                                  >
+                                  <option value="">Select a feature</option>
+                                      <option value="yes">Yes</option>
+                                      <option value="no">No</option>
+                                  </select>
+                          )}
+                      />
+                    </div>
 
                     </div>
                     <div className="mb-3">
@@ -382,28 +430,26 @@ const Create = ({ placeholder }) => {
                       className="form-control" />
                     </div>
                     <div className="mb-3">
-                      <div className="row">
-                       {
-                         galleryImages && galleryImages.map((image,index) => {
-                          return (
-                            <div className="col-md-3 mb-3" key={index}>
-                              <div className="card shadow">
-                                <img src={image} alt={`Gallery-${index}`} className="w-100" />
-                                
-                              </div>
-                              <div className="card footer mt-2">
-                                  <button 
-                                    type="button"
-                                    className="btn btn-danger"
-                                    onClick={() => DeleteImage(image)}>
-                                      Delete
-                                    </button>
-                              </div>
-                            </div>
-                          )
-                       })
-                      }
-                      </div>
+                     <div className="row">
+                        {
+                            galleryImages.map((imgObj, index) => (
+                                <div className="col-md-3 mb-3" key={index}>
+                                    <div className="card shadow">
+                                        {/* Access the .url property */}
+                                        <img src={imgObj.url} alt="Gallery" className="w-100" />
+                                    </div>
+                                    <div className="card-footer mt-2">
+                                        <button 
+                                            type="button"
+                                            className="btn btn-danger w-100"
+                                            onClick={() => DeleteImage(imgObj)}>
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                 </div>
                     </div>
                 </div>
             </div>
@@ -418,3 +464,5 @@ const Create = ({ placeholder }) => {
 }
 
 export default Create
+
+

@@ -18,6 +18,7 @@ const Edit = ({ placeholder }) => {
      const [brands,setBrands] = useState([]);
      const [galleryImages,setGalleryImages] = useState([]);
      const [productImages,setProductImages] = useState([]);
+     const [gallery,setGallery] = useState([]); 
      const navigate = useNavigate();
      const editor = useRef(null);
      const [content, setContent] = useState('');
@@ -72,7 +73,7 @@ const Edit = ({ placeholder }) => {
                         qty: result.data.qty,
                         status: String(result.data.status),
                         compare_price: result.data.compare_price,
-                        is_featured: result.is_featured,
+                        // is_featured: result.is_featured,
                         is_featured: result.data.is_featured 
                     })
                 }
@@ -151,7 +152,7 @@ const Edit = ({ placeholder }) => {
                if (result.status === 200) {
                    setLoading(false);
                    setCategories(result.data);
-                   console.log(categories);
+                   console.log(`categories is fetched :${categories}`);
                } else {
                    setLoading(false);
                    console.log("something went wrong!");
@@ -177,7 +178,7 @@ const Edit = ({ placeholder }) => {
                    if (result.status === 200) {
                        setLoading(false);
                        setBrands(result.data);
-                       console.log("brands is fetched ");
+                       console.log(`brands is fetched :${brands}`);
                    } else {
                        setLoading(false);
                        console.log("something went wrong!");
@@ -210,11 +211,14 @@ const Edit = ({ placeholder }) => {
            const result = await res.json();
    
            if (res.status === 200) {
+            
+               productImages.push({image_url: result.image_url, id: result.image_id});
+               console.log(`Gallery  before updated: ${gallery}`);
                setDisabled(false);
                setGallery(prevGallery => [...prevGallery, result.image_id]); 
                galleryImages.push(result.image_url);
                setGalleryImages(galleryImages);
-               console.log(galleryImages);
+               console.log(`Gallery after updated: ${galleryImages}`);
                e.target.value = "";
            } else {
                setDisabled(false);
@@ -227,37 +231,39 @@ const Edit = ({ placeholder }) => {
        }
    }
        const DeleteImage = async (image_url,id) => {
-    //  try {
-    //        const res = await fetch(`${apiUrl}/temp-images/${id}`, {
-    //            method: 'DELETE',
-    //            headers: {
-    //                 'Content-Type': 'application/json',
-    //                'Accept': 'application/json',
-    //                'Authorization': `Bearer ${adminToken()}`
-    //            },
+     try {
+           const res = await fetch(`${apiUrl}/products/removeImage/${id}`, {
+               method: 'DELETE',
+               headers: {
+                    'Content-Type': 'application/json',
+                   'Accept': 'application/json',
+                   'Authorization': `Bearer ${adminToken()}`
+               },
                
-    //        });
+           });
    
-    //        const result = await res.json();
+           const result = await res.json();
    
-    //        if (res.status === 200) {
-    //           //  setDisabled(false);
-    //           //  setGallery(prevGallery => [...prevGallery, result.image_id]); 
-    //           //  galleryImages.push(result.image_url);
-    //           //  setGalleryImages(galleryImages);
-    //           //  console.log(galleryImages);
-    //           //  e.target.value = "";
-    //        } else {
-    //            setDisabled(false);
-    //            toast.error(result.message || "deleting is  failed");
-    //        }
-    //    } catch (error) {
-    //       // setDisabled(false);
-    //        console.error("delete error:", error);
-    //       // toast.error("An error occurred during upload");
-    //    }
+           if (res.status === 200) {
+              //  setDisabled(false);
+              //  setGallery(prevGallery => [...prevGallery, result.image_id]); 
+              //  galleryImages.push(result.image_url);
+              //  setGalleryImages(galleryImages);
+              //  console.log(galleryImages);
+              //  e.target.value = "";
+                toast.success(result.message || "Image deleted successfully");
+           } else {
+               setDisabled(false);
+               toast.error(result.message || "deleting is  failed");
+           }
+       } catch (error) {
+          // setDisabled(false);
+           console.error("delete error:", error);
+          // toast.error("An error occurred during upload");
+       }
     const newProductImages = productImages.filter(img => img.image_url !== image_url);
     setProductImages(newProductImages);
+
     // const newGalleryImages = galleryImages.filter(img => img !== image_url);
     // setGalleryImages(newGalleryImages);
     
@@ -294,8 +300,13 @@ const SetDefaultImage = async (pro_img_id) => {
           //  console.error("Upload error:", error);
            toast.error("An error occurred during setting default image");
        }
+
+       
 }
-        
+        useEffect(() => {
+              FetchCategories();
+              FetchBrands();
+            }, []);
          
   return (
      <Layout>
