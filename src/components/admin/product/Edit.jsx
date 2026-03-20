@@ -21,6 +21,7 @@ const Edit = ({ placeholder }) => {
      const [productImages,setProductImages] = useState([]);
      const [sizesChecked,setSizesChecked] = useState([]);
       const [sizes,setSizes] = useState([]);
+      const [comparePrice, setComparePrice] = useState('');
      const [gallery,setGallery] = useState([]); 
      const navigate = useNavigate();
      const editor = useRef(null);
@@ -474,12 +475,15 @@ const SetDefaultImage = async (pro_img_id) => {
                       <div className="col-md-6">
                         <div className="mb-3">
                           <label htmlFor="" className="form-label">Discounted Price</label>
-                          <input type="text"  
-                          name="compare_price"
-                        placeholder="Discounted Price"
-                        className={'form-control '}
-                        row="3"
-                      />
+                          <input 
+                              type="text"  
+                              {...register('compare_price', { 
+                                required: false,
+                                setValueAs: v => v === "" ? null : v // Converts "" to null automatically
+                              })} 
+                              placeholder="Discounted Price"
+                              className="form-control"
+                            />
                         </div>
                       </div>
                     </div>
