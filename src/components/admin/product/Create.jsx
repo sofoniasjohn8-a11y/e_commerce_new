@@ -19,6 +19,7 @@ const Create = ({ placeholder }) => {
   const [gallery,setGallery] = useState([]);
   const [galleryImages,setGalleryImages] = useState([]);
   const [temp_images,setTemp_images] = useState([]);
+  const [sizes,setSizes] = useState([]);
   // const [image_id,setImageId] = useState(null);
   const navigate = useNavigate();
   const editor = useRef(null);
@@ -39,31 +40,37 @@ const Create = ({ placeholder }) => {
       formState: { errors },
     } = useForm();
 
-    const saveProduct = async (data) =>{
-      const formData = {...data,"gallery":gallery};
-        console.log(formData);
-        setLoading(true);
-        const res =  await fetch(`${apiUrl}/products`,{
-            'method':'POST',
-            'headers':{
-                'Content-Type':'application/json',
-                'Accept':'application/json',
-                'Authorization':`Bearer ${adminToken()}`
+    const saveProduct = async (data) => {
+    const formData = { ...data, "gallery": gallery };
+    setLoading(true);
+
+    try {
+        const response = await fetch(`${apiUrl}/products`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${adminToken()}`
             },
-               body : JSON.stringify(formData)
-            }).then(res =>res.json(formData))
-            .then(result => {
-            if(result.status == 200){
-                setLoading(false);
-                console.log(result);
-                toast.success(result.message);
-                navigate('/admin/product');
-            }
-            else
-                console.log("something went wrong!");
-              console.log(result);
-            })
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json(); // Correctly parsing the response
+
+        if (result.status === 200) {
+            toast.success(result.message);
+            navigate('/admin/product');
+        } else {
+            console.error("Server Error:", result);
+            
+        }
+    } catch (error) {
+        console.error("Network Error:", error);
+        toast.error("Network error. Please check your connection.");
+    } finally {
+        setLoading(false);
     }
+};
     const FetchCategories = async () => {
         setLoading(true);
         try {
@@ -112,6 +119,33 @@ const Create = ({ placeholder }) => {
                 setLoading(false);
                 console.error("Error fetching Brands:", error);
                 toast.error("Failed to load brands");
+            }
+          }
+       const FetchSizes = async () => {
+        
+            setLoading(true);
+            try {
+                const res = await fetch(`${apiUrl}/sizes`, {
+                    'method': 'GET',
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${adminToken()}`
+                    }
+                });
+                const result = await res.json();
+                if (result.status === 200) {
+                    setLoading(false);
+                    console.log(result.data);
+                     setSizes(result.data);
+                } else {
+                    setLoading(false);
+                    console.log("something went wrong!");
+                }
+            } catch (error) {
+                setLoading(false);
+                console.error("Error fetching sizes:", error);
+                toast.error("Failed to load sizes");
             }
           }
       const handleFile = async (e) => {
@@ -185,13 +219,13 @@ const Create = ({ placeholder }) => {
       useEffect(() => {
         FetchCategories();
         FetchBrands();
-        
+        FetchSizes();
       }, []);
 
     
   return (
   <Layout>
-        <div className="container">
+        <div className="container ">
         <div className="row mb-5" >
             <div className="d-flex justify-content-between mt-5 pb-3">
             <h4 className='h4  mb-0'>Product/Create</h4>
@@ -422,6 +456,32 @@ const Create = ({ placeholder }) => {
                       />
                     </div>
 
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">Sizes</label>
+                      {
+                        sizes && sizes.length > 0 && sizes.map((size,index) => {
+                          return (
+                              <div className="form-check-inline" key={`size-${index}`}>
+                                <input 
+                                {
+                                    ...register('sizes', {
+                                        required: 'At least one size must be selected'
+                                    })
+                                }
+                                    className="form-check-input ms-2" type="checkbox" value={size.id} id={`size-${size.id}`} />
+                                <label className="form-check-label ps-2" forhtml={`size-${size.id}`}>
+                                  {size.name}
+                                </label>
+                                 {
+                                errors.sizes && <p className='invalid-feedback'>{errors.sizes.message}</p>
+                            }
+                            </div>
+                          )
+                        })
+                        
+                    }
+                    
+                    </div>
                     </div>
                     <div className="mb-3">
                       <label htmlFor="" className="form-label">Image</label>

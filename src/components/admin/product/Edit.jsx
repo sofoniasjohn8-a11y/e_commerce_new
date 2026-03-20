@@ -11,6 +11,7 @@ import JoditEditor from 'jodit-react';
 
 const Edit = ({ placeholder }) => {
      const params = useParams();
+     const [prod_id,setProd_id] = useState(params.id);
      const [products,setProducts] = useState([]);
      const [loading,setLoading] = useState(false);
      const [disabled,setDisabled] = useState(false);
@@ -18,6 +19,8 @@ const Edit = ({ placeholder }) => {
      const [brands,setBrands] = useState([]);
      const [galleryImages,setGalleryImages] = useState([]);
      const [productImages,setProductImages] = useState([]);
+     const [sizesChecked,setSizesChecked] = useState([]);
+      const [sizes,setSizes] = useState([]);
      const [gallery,setGallery] = useState([]); 
      const navigate = useNavigate();
      const editor = useRef(null);
@@ -30,60 +33,55 @@ const Edit = ({ placeholder }) => {
        [placeholder]
      );
    
-       const {
-         register,
-         handleSubmit,
-         watch,
+       const { 
+         register, 
+         handleSubmit, 
+         watch, 
          reset,
-         control,
-         formState: { errors },
-       } = useForm({
-        defaultValues : async () =>  {
-           
+          control, 
+          formState: { errors } } 
+          = useForm({
+           defaultValues: async () => {
             const res = await fetch(`${apiUrl}/products/${params.id}`, {
-                'method': 'GET',
-                'headers': {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${adminToken()}`
-                }
-            })
-                .then(res => res.json())
-                .then(result => {
-                    setProductImages(result.data.product_images)
-                    // result.data.product_images && result.data.product_images.length > 0 && result.data.product_images.map((productImage) => {
-                    //     galleryImages.push(productImage.image_url);
-                    // }   )
-                    result.data.product_images && result.data.product_images.length > 0 &&  result.data.product_images.map((productImage) => {
-                    // console.log(`productImages : ${productImage.image_url} - ${productImage.id}`);
-                    galleryImages.push(productImage.image_url);
-                    setGalleryImages(galleryImages);
-                    
-                    })
-                    console.log("Gallery Images:", galleryImages);
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${adminToken()}`
+            }
+        });
 
-                    reset({
-                        title: result.data.title,
-                        category_id: result.data.category_id,
-                        brand_id: result.data.brand_id, 
-                        short_description: result.data.short_description,
-                        description: result.data.description,
-                        price: result.data.price,
-                        sku: result.data.sku,
-                        qty: result.data.qty,
-                        status: String(result.data.status),
-                        compare_price: result.data.compare_price,
-                        // is_featured: result.is_featured,
-                        is_featured: result.data.is_featured 
-                    })
-                }
-                );
+        const result = await res.json();
+
+        if (result.data) {
+            // Update secondary states
+            console.log(result);
+            setProd_id(result.data.id);
+            setProductImages(result.data.product_images || []);
+            setSizesChecked(result.productSize || []);
             
-           const result = await response.json();
-            return result.data;
+            // Map gallery images
+            const images = result.data.product_images?.map(img => img.image_url) || [];
+            setGalleryImages(images);
+
+            // Return the actual data to the form
+            return {
+                title: result.data.title,
+                category_id: result.data.category_id,
+                brand_id: result.data.brand_id,
+                short_description: result.data.short_description,
+                description: result.data.description,
+                price: result.data.price,
+                sku: result.data.sku,
+                qty: result.data.qty,
+                status: String(result.data.status),
+                compare_price: result.data.compare_price,
+                is_featured: result.data.is_featured
+            };
         }
-       }
-       );
+        return {}; // Return empty object if data fails
+    }
+});
        
     //    const FetchProducts = async () => {
     //        setLoading(true);
@@ -112,31 +110,58 @@ const Edit = ({ placeholder }) => {
     //            toast.error("Failed to load products");
     //        }
     //      }
+     const FetchSizes = async () => {
+            
+                setLoading(true);
+                try {
+                    const res = await fetch(`${apiUrl}/sizes`, {
+                        'method': 'GET',
+                        'headers': {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${adminToken()}`
+                        }
+                    });
+                    const result = await res.json();
+                    if (result.status === 200) {
+                        setLoading(false);
+                        console.log(result.data);
+                         setSizes(result.data);
+                    } else {
+                        setLoading(false);
+                        console.log("something went wrong!");
+                    }
+                } catch (error) {
+                    setLoading(false);
+                    console.error("Error fetching sizes:", error);
+                    toast.error("Failed to load sizes");
+                }
+              }
        const saveProduct = async (data) =>{
-         const formData = {...data,"gallery":gallery};
-           console.log(formData);
-           setLoading(true);
-           const res =  await fetch(`${apiUrl}/products`,{
-               'method':'POST',
-               'headers':{
-                   'Content-Type':'application/json',
-                   'Accept':'application/json',
-                   'Authorization':`Bearer ${adminToken()}`
-               },
-                  body : JSON.stringify(formData)
-               }).then(res =>res.json(formData))
-               .then(result => {
-               if(result.status == 200){
-                   setLoading(false);
-                   console.log(result);
-                   toast.success(result.message);
-                   navigate('/admin/product');
-               }
-               else
-                   console.log("something went wrong!");
-                 console.log(result);
-               })
-       }
+             const formData = {...data,"gallery":gallery};
+               console.log(formData);
+               setLoading(true);
+               const res =  await fetch(`${apiUrl}/products/${prod_id}`,{
+                   'method':'PUT',
+                   'headers':{
+                       'Content-Type':'application/json',
+                       'Accept':'application/json',
+                       'Authorization':`Bearer ${adminToken()}`
+                   },
+                      body : JSON.stringify(formData)
+                   }).then(res =>res.json(formData))
+                   .then(result => {
+                   if(result.status == 200){
+                       setLoading(false);
+                       console.log(result);
+                       toast.success(result.message);
+                       navigate('/admin/product');
+                   }
+                   else
+                       console.log("something went wrong!");
+                     console.log(result);
+                   })
+           }
        const FetchCategories = async () => {
            setLoading(true);
            try {
@@ -306,6 +331,7 @@ const SetDefaultImage = async (pro_img_id) => {
         useEffect(() => {
               FetchCategories();
               FetchBrands();
+              FetchSizes();
             }, []);
          
   return (
@@ -541,7 +567,42 @@ const SetDefaultImage = async (pro_img_id) => {
                        )}
                     />
                  </div>
-
+                    
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">Sizes</label>
+                      {
+                        sizes && sizes.length > 0 && sizes.map((size,index) => {
+                          return (
+                              <div className="form-check-inline" key={`size-${index}`}>
+                                <input 
+                                {
+                                    ...register('sizes', {
+                                        required: 'At least one size must be selected'
+                                    })
+                                }
+                                checked={sizesChecked.includes(size.id)}
+                                onChange={(e)=>{
+                                  if(e.target.checked){
+                                       setSizesChecked([...sizesChecked,size.id])
+                                  }
+                                  else{
+                                      setSizesChecked(sizesChecked.filter(sid => size.id != sid))
+                                  }
+                                }}      
+                                    className="form-check-input ms-2" type="checkbox" value={size.id} id={`size-${size.id}`} />
+                                <label className="form-check-label ps-2" forhtml={`size-${size.id}`}>
+                                  {size.name}
+                                </label>
+                                 {
+                                errors.sizes && <p className='invalid-feedback'>{errors.sizes.message}</p>
+                            }
+                            </div>
+                          )
+                        })
+                        
+                    }
+                    
                     </div>
                     <div className="mb-3">
                       <label htmlFor="" className="form-label">Image</label>
