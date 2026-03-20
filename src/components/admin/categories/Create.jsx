@@ -32,7 +32,7 @@ const Create = () => {
             if(result.status == 200){
                 setLoading(false);
                 toast.success(result.message);
-                navigate('/admin/show');
+                navigate('/admin/categories');
             }
             else
                 console.log("something went wrong!");

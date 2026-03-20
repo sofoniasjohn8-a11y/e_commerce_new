@@ -570,40 +570,40 @@ const SetDefaultImage = async (pro_img_id) => {
                     
                     </div>
                     <div className="mb-3">
-                      <label htmlFor="" className="form-label">Sizes</label>
-                      {
-                        sizes && sizes.length > 0 && sizes.map((size,index) => {
-                          return (
-                              <div className="form-check-inline" key={`size-${index}`}>
-                                <input 
-                                {
-                                    ...register('sizes', {
-                                        required: 'At least one size must be selected'
-                                    })
+                      <label className="form-label">Sizes</label>
+                      <div> {/* Wrapper to keep checkboxes together */}
+                        {sizes && sizes.length > 0 && sizes.map((size, index) => (
+                          <div className="form-check-inline" key={`size-${index}`}>
+                            <input 
+                              {...register('sizes', { required: 'At least one size must be selected' })}
+                              checked={sizesChecked.includes(size.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSizesChecked([...sizesChecked, size.id]);
+                                } else {
+                                  setSizesChecked(sizesChecked.filter(sid => size.id !== sid));
                                 }
-                                checked={sizesChecked.includes(size.id)}
-                                onChange={(e)=>{
-                                  if(e.target.checked){
-                                       setSizesChecked([...sizesChecked,size.id])
-                                  }
-                                  else{
-                                      setSizesChecked(sizesChecked.filter(sid => size.id != sid))
-                                  }
-                                }}      
-                                    className="form-check-input ms-2" type="checkbox" value={size.id} id={`size-${size.id}`} />
-                                <label className="form-check-label ps-2" forhtml={`size-${size.id}`}>
-                                  {size.name}
-                                </label>
-                                 {
-                                errors.sizes && <p className='invalid-feedback'>{errors.sizes.message}</p>
-                            }
-                            </div>
-                          )
-                        })
-                        
-                    }
-                    
-                    </div>
+                              }}      
+                              /* Add is-invalid class to the checkboxes if there is an error */
+                              className={`form-check-input ms-2 ${errors.sizes ? 'is-invalid' : ''}`} 
+                              type="checkbox" 
+                              value={size.id} 
+                              id={`size-${size.id}`} 
+                            />
+                            <label className="form-check-label ps-2" htmlFor={`size-${size.id}`}>
+                              {size.name}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Use d-block to ensure the message shows up even if Bootstrap tries to hide it */}
+                      {errors.sizes && (
+                        <p className="invalid-feedback d-block">
+                          {errors.sizes.message}
+                        </p>
+                      )}
+                  </div>
                     <div className="mb-3">
                       <label htmlFor="" className="form-label">Image</label>
                       <input type="file" 

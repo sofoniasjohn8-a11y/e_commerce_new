@@ -497,8 +497,8 @@ const Create = ({ placeholder }) => {
                                     <div className="card shadow">
                                         {/* Access the .url property */}
                                         <img src={imgObj.url} alt="Gallery" className="w-100" />
-                                    </div>
-                                    <div className="card-footer mt-2">
+
+                                        <div className="card-footer mt-2 border-0">
                                         <button 
                                             type="button"
                                             className="btn btn-danger w-100"
@@ -506,6 +506,8 @@ const Create = ({ placeholder }) => {
                                             Delete
                                         </button>
                                     </div>
+                                    </div>
+                                    
                                 </div>
                             ))
                         }
