@@ -62,7 +62,7 @@ const Create = ({ placeholder }) => {
             navigate('/admin/product');
         } else {
             console.error("Server Error:", result);
-            
+            toast.error(result.message);
         }
     } catch (error) {
         console.error("Network Error:", error);
@@ -122,7 +122,7 @@ const Create = ({ placeholder }) => {
             }
           }
        const FetchSizes = async () => {
-        
+
             setLoading(true);
             try {
                 const res = await fetch(`${apiUrl}/sizes`, {
