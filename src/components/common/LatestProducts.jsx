@@ -39,64 +39,30 @@ const LatestProducts = () => {
                 {
                     latestProducts && latestProducts.length > 0 && latestProducts.map((latestProduct,index) => (
                 <div className="col-md-3 col-6" key={`key-${index}`}>
-                        <div className='product card border-0'>
-                            <div className='card-img'>
-                                <img src={productImg1} alt="" className='w-100'/>
+                    <div className='product card border-0'>
+                        <div className='card-img'>
+                                <img src={latestProduct.image_url} alt="" className='w-100'/>
                             </div>
                             <div className='card-body pt-3'>
-                                <a href="">{latestProduct.title}</a>
+                                {latestProduct.title && <span >{latestProduct.title}</span>}
                                 <div className='price'>
-                                    ${latestProduct.price} <span className='text-decoration-line-through'>${latestProduct.compare_price}</span>
+                                    ${latestProduct.price }
+                                    {
+                                        latestProduct.compare_price && <span className='text-decoration-line-through ms-2'>${latestProduct.compare_price}</span>
+                             
+                                    }
+                            
+                             
+
                                 </div>
                             </div>
-
-                        </div>
+                                
                     </div>
+                </div>
                     ))
                 }
            
-              {/* <div className="col-md-3 col-6">
-                <div className='product card border-0'>
-                    <div className='card-img'>
-                        <img src={productImg1} alt="" className='w-100'/>
-                    </div>
-                    <div className='card-body pt-3'>
-                        <a href="">Red Check Shirt</a>
-                        <div className='price'>
-                            $50 <span className='text-decoration-line-through'>$80</span>
-                        </div>
-                    </div>
-
-                </div>
-             </div>
-              <div className="col-md-3 col-6">
-                <div className='product card border-0'>
-                    <div className='card-img'>
-                        <img src={productImg1} alt="" className='w-100'/>
-                    </div>
-                    <div className='card-body pt-3'>
-                        <a href="">Red Check Shirt</a>
-                        <div className='price'>
-                            $50 <span className='text-decoration-line-through'>$80</span>
-                        </div>
-                    </div>
-
-                </div>
-             </div>
-              <div className="col-md-3 col-6">
-                <div className='product card border-0'>
-                    <div className='card-img'>
-                        <img src={productImg1} alt="" className='w-100'/>
-                    </div>
-                    <div className='card-body pt-3'>
-                        <a href="">Red Check Shirt</a>
-                        <div className='price'>
-                            $50 <span className='text-decoration-line-through'>$80</span>
-                        </div>
-                    </div>
-
-                </div>
-             </div> */}
+             
             </div>
         </div>
     </section>

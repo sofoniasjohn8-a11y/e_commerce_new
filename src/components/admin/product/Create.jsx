@@ -362,12 +362,15 @@ const Create = ({ placeholder }) => {
                       <div className="col-md-6">
                         <div className="mb-3">
                           <label htmlFor="" className="form-label">Discounted Price</label>
-                          <input type="text"  
-                          
-                        placeholder="Discounted Price"
-                        className={'form-control '}
-                        row="3"
-                      />
+                            <input 
+                              type="text"  
+                              {...register('compare_price', { 
+                                required: false,
+                                setValueAs: v => v === "" ? null : v // Converts "" to null automatically
+                              })} 
+                              placeholder="Discounted Price"
+                              className="form-control"
+                            />
                         </div>
                       </div>
                     </div>
@@ -393,7 +396,11 @@ const Create = ({ placeholder }) => {
                         <div className="mb-3">
                           <label htmlFor="" className="form-label">Barcode</label>
                          <input type="text"  
-                          
+                          {
+                            ...register('barcode',{
+                                required:false
+                            })
+                          }
                         placeholder="Barcode"
                         className='form-control'
                         row="3"

@@ -77,7 +77,8 @@ const Edit = ({ placeholder }) => {
                 qty: result.data.qty,
                 status: String(result.data.status),
                 compare_price: result.data.compare_price,
-                is_featured: result.data.is_featured
+                is_featured: result.data.is_featured,
+                barcode:result.data.barcode
             };
         }
         return {}; // Return empty object if data fails
@@ -509,7 +510,11 @@ const SetDefaultImage = async (pro_img_id) => {
                         <div className="mb-3"> 
                           <label htmlFor="" className="form-label">Barcode</label>
                          <input type="text"  
-                          
+                           {
+                            ...register('barcode',{
+                                required:false
+                            })
+                          }
                         placeholder="Barcode"
                         className='form-control'
                         row="3"
@@ -556,21 +561,17 @@ const SetDefaultImage = async (pro_img_id) => {
                       </div>
                        <div className="mb-3">
                         <label className="form-label">Is Featured?</label>
-                        <Controller
-                            name="is_featured"
-                            control={control}
-                            render={({ field }) => (
-                                <select 
-                                    {...field} // This handles value, onChange, onBlur, and ref
-                                    className="form-control"
-                                >
-                                <option value="">Select a feature</option>
-                                    <option value="yes">Yes</option>
-                                    <option value="no">No</option>
-                                </select>
-                       )}
-                    />
-                 </div>
+                      <select
+                              {...register('is_featured', {
+                                required:false
+                              })}
+                              className={`form-control`}
+                            >
+                              <option value="">Select a feature</option>
+                              <option value="yes">Yes</option>
+                              <option value="no">No</option>
+                            </select>
+                      </div>
                     
                     </div>
                     <div className="mb-3">
