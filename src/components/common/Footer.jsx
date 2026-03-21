@@ -2,7 +2,7 @@ import React from 'react'
 import Logowhite from '../../assets/images/logo-white.png'
 
 const Footer = () => {
-  return (<footer className="py-5 text-white ">
+  return (<footer className="py-5 text-white mb-5">
     <div className="container">
         <div className="row mb-5">
             <div className="col-md-3 pb-4">
