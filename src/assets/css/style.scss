@@ -166,6 +166,11 @@ footer{
             }
         }
     }
+    .swiper-button-next,
+    .swiper-button-prev {
+    z-index: 10 !important;
+    cursor: pointer !important;
+}
 }
 .product{
    border-radius:10px;

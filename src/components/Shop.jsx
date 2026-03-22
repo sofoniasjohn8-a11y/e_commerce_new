@@ -47,6 +47,7 @@ const Shop = () => {
         toast.error("Failed to load categories");
     }
   }
+  
   const FetchProducts = async () => {
     let search = []
     let params = ''
@@ -184,7 +185,7 @@ const Shop = () => {
                                 <li className='mb-2' key={`bra=${brand.id}`}>
                                     <input type="checkbox" 
                                     value={brand.id}
-                                    checked={brandChecked.includes(String(brand.id))}
+                                    defaultChecked={brandChecked.includes(String(brand.id))}
                                     onClick={HandleBrand}
                                     />
                                     <label htmlFor="" className='ps-2'>{brand.name}</label>
@@ -205,7 +206,7 @@ const Shop = () => {
                                     <img src={product.image_url} alt="" className='w-100'/>
                                 </div>
                                 <div className='card-body pt-3'>
-                                    <a href="">{product.title}</a>
+                                    <Link to={`/product/${product.id}`}>{product.title} </Link>
                                     <div className='price'>
                                         {product.price}{" "}
                                         {product.compare_price &&  <span className='text-decoration-line-through'>${product.compare_price}</span>}
