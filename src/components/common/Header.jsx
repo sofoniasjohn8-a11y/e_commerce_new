@@ -56,7 +56,7 @@ const Header = () => {
                     > 
                     {
                         categories && categories.map(category =>(
-                            <Nav.Link href={`/shop/?category=${category.id}`}>{category.name}</Nav.Link>
+                            <Nav.Link href={`/shop/?category=${category.id}`} key={`${category.id}`}>{category.name}</Nav.Link>
                         ))
                     }
                         

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Layout from '../components/common/Layout.jsx'
 import { Link, useParams } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -15,6 +15,7 @@ import ProductImgTwo from '../assets/images/Mens/six.jpg'
 import ProductImgThree from '../assets/images/Mens/seven.jpg'
 import { toast } from 'react-toastify';
 import { adminToken, apiUrl } from './common/http.jsx';
+import { CartContext } from './context/Cart.jsx';
 
 
 const Product = () => {
@@ -25,7 +26,9 @@ const Product = () => {
          const [productImage,setProductImage] = useState([])
          const [productSizes,setProductSizes] = useState([])
          const [sizeChecked,setSizeChecked] = useState([]);
-        const params = useParams()
+        const params = useParams();
+        const {addToCart} = useContext(CartContext)
+
         
     const FetchProduct = async () => {
             // let search = []
@@ -71,7 +74,24 @@ const Product = () => {
                 toast.error("Failed to load categories");
             }
           }
-        useEffect(()=>{
+          const HandleAddToCart =() =>{
+            console.log(`Handle cart s clicked :${sizeChecked}`);
+            if(productSizes.length > 0){
+                if(sizeChecked.length == 0){
+                    toast.error('Please select A size');
+                }
+                else{
+                    addToCart(product,sizeChecked);
+                     toast.success('Product Added succesfully to cart');
+                
+                }
+            }
+            else{
+                addToCart(product,null);
+                toast.success('Product Added succesfully to cart');
+            }
+          }
+         useEffect(()=>{
             FetchProduct()
         },[]);
   return (
@@ -167,13 +187,20 @@ const Product = () => {
                     <div className="sizes pt-2">
                         {
                             productSizes && productSizes.map(productSize =>(
-                                 <button className="btn btn-size me-2" key={`prod-${productSize.id}`}>{productSize.size.name}</button>
+                                 <button 
+                                 onClick= {()=>setSizeChecked(productSize.size.name)}
+                                 className={`btn btn-size me-2 ${sizeChecked == productSize.size.name ? 'active' :' '} `}
+                                  key={`prod-${productSize.id}`}>
+                                    {productSize.size.name}
+                                </button>
                             ))
                         }
                     </div>
                 </div>
                 <div className="add-to-cart my-4">
-                    <button className='btn btn-primary text-uppercase'>Add to Cart</button>
+                    <button 
+                    onClick = {() => HandleAddToCart()}
+                    className='btn btn-primary text-uppercase'>Add to Cart</button>
                 </div>
                 <hr/>
                 <div className="sku">

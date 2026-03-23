@@ -109,12 +109,12 @@ const Checkout = () => {
                             <div>
                                 <input type="radio" 
                                 onClick={HandleSubmit}
-                                checked={PaymentMethod == 'stripe'}value={'stripe'} />
+                                defaultChecked={PaymentMethod == 'stripe'}value={'stripe'} />
                                 <label htmlFor="" className="ps-2">Stripe</label>
                            
                                 <input type="radio" 
                                 onClick={HandleSubmit}
-                                checked={PaymentMethod == 'cod'}  value={'cod'} className='ms-3' />
+                                defaultChecked={PaymentMethod == 'cod'}  value={'cod'} className='ms-3' />
                                 <label htmlFor="" className="ps-2">Cod</label>
                             </div>
                             </div>
