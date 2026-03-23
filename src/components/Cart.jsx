@@ -1,15 +1,19 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Layout from './common/Layout'
 import { Link } from 'react-router-dom'
 import ProductImg from '../assets/images/Mens/seven.jpg'
 import { CartContext } from './context/Cart'
 const Cart = () => {
-    const {cartData,shipping,SubTotal,GrandTotal} = useContext(CartContext);
-    const fetchCart = () =>{
-        console.log(`inside fetchCart :${cartData}`);
+    const {cartData,shipping,SubTotal,GrandTotal,updateItem,deleteItem} = useContext(CartContext);
+    const [qty,setQty] = useState([])
+   
+    const HandleItem =(e,ItemId) =>{
+        let newQty = e.target.value;
+        setQty(prev=>({...prev,[ItemId]:newQty}))
+        updateItem(ItemId,newQty)
     }
     useEffect(()=>{
-        fetchCart();
+        // fetchCart();
     })
   return (
     <Layout>
@@ -29,6 +33,15 @@ const Cart = () => {
                 <table className="table">
                     <tbody>
                         {
+                            cartData.length == 0 && <tr>
+                                 <td colspan={4}
+                                 align='center' valign='middle' style={{height:200}}
+                                     ><h2>Your Cart is Empty</h2>
+                                 </td>
+                            </tr>
+                           
+                        }
+                        {
                             cartData && cartData.map(item=>(
                                         <tr key={item.id}>
                                     <td ><img src={item.image_url} alt="" width={80}/></td>
@@ -44,13 +57,24 @@ const Cart = () => {
                                         </div>
                                     </td>
                                     <td  valign='middle' className='py-3'>
-                                            <input  style={{width:'100px'}} type="number"  value = {item.qty} className='form-control '/>
+                                            <input  style={{width:'100px'}}
+                                            min={1}
+                                            max={10}
+                                             type="number"
+                                             value={item.qty}  
+                                             onChange ={(e)=>HandleItem(e,item.id)}
+                                              className='form-control '/>
                                     </td>
                                     <td valign='middle'>
                                         <div>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
+                                            <a
+                                            href="#"
+                                            onClick={()=>{deleteItem(item.id)}}
+                                            ><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16"
+                                            >
                                                                 <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
                                                             </svg>
+                                                            </a>
                                         </div>
                                             </td>
                                 </tr>
@@ -60,25 +84,28 @@ const Cart = () => {
                     </tbody>
                 </table>
             </div>
-            <div className="row justify-content-end py-3">
-                <div className="col-md-3">
-                    <div className="d-flex justify-content-between border-bottom py-2">
-                        <div>SubTotal</div>
-                        <div>${SubTotal()}</div>
+            {
+                cartData.length > 0 && 
+                <div className="row justify-content-end py-3">
+                    <div className="col-md-3">
+                        <div className="d-flex justify-content-between border-bottom py-2">
+                            <div>SubTotal</div>
+                            <div>${SubTotal()}</div>
+                        </div>
+                        <div className="d-flex justify-content-between border-bottom py-2">
+                            <div>Shipping</div>
+                            <div>${shipping()}</div>
+                        </div>
+                        <div className="d-flex justify-content-between border-bottom py-2">
+                            <div><strong>GrandTotal</strong></div>
+                            <div>${GrandTotal()}</div>
+                        </div>
+                    <div className="d-flex justify-content-end pt-3 pb-5">
+                        <Link to={'/checkout'} className="btn btn-primary">Procced To Checkout</Link>
                     </div>
-                    <div className="d-flex justify-content-between border-bottom py-2">
-                        <div>Shipping</div>
-                        <div>${shipping()}</div>
                     </div>
-                    <div className="d-flex justify-content-between border-bottom py-2">
-                        <div><strong>GrandTotal</strong></div>
-                        <div>${GrandTotal()}</div>
-                    </div>
-                <div className="d-flex justify-content-end pt-3 pb-5">
-                    <Link to={'/checkout'} className="btn btn-primary">Procced To Checkout</Link>
                 </div>
-                </div>
-            </div>
+         }
         </div>
     </Layout>
   )

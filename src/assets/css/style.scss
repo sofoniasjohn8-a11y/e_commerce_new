@@ -230,3 +230,21 @@ footer{
        
     }
 }
+.cart-bucket{
+    position:relative;
+    span{
+        position:absolute;
+        background-color: #f76c6c;
+        color: white;
+        display:inline-block;
+        width:20px;
+        height:20px;
+        border-radius:10px;
+        top:-5px;
+        right:-13px;
+        font-size:12px;
+        text-align:center;
+
+
+    }
+}
