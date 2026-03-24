@@ -39,6 +39,7 @@ const Edit = ({ placeholder }) => {
          handleSubmit, 
          watch, 
          reset,
+         setError,
           control, 
           formState: { errors } } 
           = useForm({
@@ -85,33 +86,7 @@ const Edit = ({ placeholder }) => {
     }
 });
        
-    //    const FetchProducts = async () => {
-    //        setLoading(true);
-    //        try {
-    //            const res = await fetch(`${apiUrl}/products/${params.id}`, {
-    //                'method': 'GET',
-    //                'headers': {
-    //                    'Content-Type': 'application/json',
-    //                    'Accept': 'application/json',
-    //                    'Authorization': `Bearer ${adminToken()}`
-    //                }
-    //            });
-    //            const result = await res.json();
-    //            if (result.status === 200) {
-    //                console.log(result);
-    //                setLoading(false);
-    //                setProducts(result.data);
-    //                console.log(products);
-    //            } else {
-    //                setLoading(false);
-    //                console.log("something went wrong!");
-    //            }
-    //        } catch (error) {
-    //            setLoading(false);
-    //            console.error("Error fetching products:", error);
-    //            toast.error("Failed to load products");
-    //        }
-    //      }
+   
      const FetchSizes = async () => {
             
                 setLoading(true);
@@ -159,8 +134,13 @@ const Edit = ({ placeholder }) => {
                        toast.success(result.message);
                        navigate('/admin/product');
                    }
-                   else
-                       console.log("something went wrong!");
+                  else {
+                          const formErrors = result.errors;
+                  Object.keys(formErrors).forEach((field)=>{
+                    setError(field,{message : formErrors[field][0]});
+                  })
+                    }
+                      
                      console.log(result);
                    })
            }
@@ -180,10 +160,19 @@ const Edit = ({ placeholder }) => {
                    setLoading(false);
                    setCategories(result.data);
                    console.log(`categories is fetched :${categories}`);
-               } else {
-                   setLoading(false);
+               } else if (res.status === 400 || res.status === 422) {
+                  const formErrors = result.error || result; 
+                  Object.keys(formErrors).forEach((field) => {
+                      setError(field, {
+                          type: "server",
+                          message: formErrors[field][0] 
+                      });
+                  });
                    console.log("something went wrong!");
                }
+               else {
+                           toast.error(result.message || "An unexpected error occurred");
+                       }
            } catch (error) {
                setLoading(false);
                console.error("Error fetching categories:", error);
@@ -473,20 +462,29 @@ const SetDefaultImage = async (pro_img_id) => {
                         )}
                         </div>
                       </div>
-                      <div className="col-md-6">
+                   <div className="col-md-6">
                         <div className="mb-3">
-                          <label htmlFor="" className="form-label">Discounted Price</label>
-                          <input 
-                              type="text"  
-                              {...register('compare_price', { 
-                                required: false,
-                                setValueAs: v => v === "" ? null : v // Converts "" to null automatically
-                              })} 
-                              placeholder="Discounted Price"
-                              className="form-control"
+                            <label htmlFor="" className="form-label">Discounted Price</label>
+                            <input 
+                                type="text"  
+                                {...register('compare_price', { 
+                                    required: false,
+                                    // Ensure it's treated as a number/null for Laravel
+                                    setValueAs: v => (v === "" || v === null) ? null : v 
+                                })} 
+                                placeholder="Discounted Price"
+                                // ADD THIS: Dynamic class to turn the border red
+                                className={`form-control ${errors.compare_price ? 'is-invalid' : ''}`}
                             />
+                            
+                            {/* ADD THIS: The error message display */}
+                            {errors.compare_price && (
+                                <p className="invalid-feedback">
+                                    {errors.compare_price.message}
+                                </p>
+                            )}
                         </div>
-                      </div>
+                    </div>
                     </div>
                     <div className="row">
                       <h3 className="pt-3">Inventory</h3><hr/>
@@ -648,7 +646,7 @@ const SetDefaultImage = async (pro_img_id) => {
                     </div>
                 </div>
             </div>
-           <button className="btn btn-primary mt-3" onClick={() => saveProduct()}>Update</button>
+           <button className="btn btn-primary mt-3">Update</button>
          </form>
             
             </div>

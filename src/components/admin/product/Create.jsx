@@ -37,6 +37,7 @@ const Create = ({ placeholder }) => {
       handleSubmit,
       watch,
       control,
+      setError,
       formState: { errors },
     } = useForm();
 
@@ -61,8 +62,12 @@ const Create = ({ placeholder }) => {
             toast.success(result.message);
             navigate('/admin/product');
         } else {
-            console.error("Server Error:", result);
-            toast.error(result.message);
+            // console.error("Server Error:", result);
+            // toast.error(result.message);
+             const formErrors = result.errors;
+                  Object.keys(formErrors).forEach((field)=>{
+                    setError(field,{message : formErros[field][0]});
+                  })
         }
     } catch (error) {
         console.error("Network Error:", error);
