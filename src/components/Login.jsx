@@ -1,15 +1,22 @@
 import React, { useContext } from 'react'
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { apiUrl } from './common/http';
 import Layout from './common/Layout';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom'
 import { Auth } from './context/Auth';
 
+
+
+    // Get the path the user came from, or default to "/account"
+    
+
+
 const Login = () => {
     const {login} = useContext(Auth)
-
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/account";
  const {
       register,
       handleSubmit,
@@ -44,7 +51,7 @@ const Login = () => {
             localStorage.setItem('userInfo',JSON.stringify(userInfo))
             login(userInfo)
            
-            navigate('/account');
+            navigate(from, { replace: true });
         } }
         // Changed to check for 400 and handle the flat object structure
         else if (res.status === 400 || res.status === 422) {
