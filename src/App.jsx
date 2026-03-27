@@ -28,6 +28,8 @@ import {default as EditProducts} from './components/admin/product/Edit'
 import { CartProvider } from './components/context/Cart'
 import { RequireAuth } from './components/RequireAuth'
 import Confirmation from './components/Confirmation'
+import ShowOrder from './components/admin/order/ShowOrder'
+import ShowDetails from './components/admin/order/ShowDetails'
 
 
 
@@ -103,6 +105,18 @@ function App() {
         <AdminRequireAuth>
             <EditProducts/>
         </AdminRequireAuth>}/>
+      <Route path='/admin/orders' element={
+        <AdminRequireAuth>
+            <ShowOrder/>
+        </AdminRequireAuth>}/>
+      <Route path='/admin/orders/:id' element={
+        <AdminRequireAuth>
+            <ShowDetails/>
+        </AdminRequireAuth>}/>
+      {/* <Route path='/admin/categories/edit/:id' element={
+        <AdminRequireAuth>
+            <EditCategory/>
+        </AdminRequireAuth>}/> */}
     </Routes>
     </BrowserRouter>
     </CartProvider>
