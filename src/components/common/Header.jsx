@@ -10,7 +10,8 @@ import { CartContext } from '../context/Cart';
 const Header = () => {
         const [categories,setCategories] = useState([]);
         const [loading,setLoading] = useState(false);
-        const {getQty} = useContext(CartContext);
+       const {getQty,cartData} = useContext(CartContext);
+
         const FetchCategories = async () => {
         setLoading(true);
         try {

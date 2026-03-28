@@ -60,13 +60,9 @@ export const CartProvider  = ({children}) =>{
             setCartData(UpdatedItems)
             localStorage.setItem('cart',JSON.stringify(UpdatedItems))
         }
-        const getQty = () =>{
-            let qty = 0;
-            cartData.map(item =>(
-                qty += parseInt(item.qty)
-            ))
-            return qty;
-        }
+       const getQty = () => {
+            return cartData.reduce((total, item) => total + parseInt(item.qty || 0), 0);
+        };
     return (
         <CartContext.Provider value={{addToCart,cartData,shipping,SubTotal,GrandTotal,updateItem,deleteItem,getQty}}>
             {children}

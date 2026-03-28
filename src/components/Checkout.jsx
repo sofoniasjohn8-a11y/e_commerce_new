@@ -6,6 +6,7 @@ import { CartContext } from './context/Cart';
 import { useForm } from 'react-hook-form';
 import { apiUrl, userToken } from './common/http';
 import { toast } from 'react-toastify';
+import Loader from './common/Loader';
 
 const Checkout = () => {
     const [PaymentMethod,SetPaymentMethod] = useState('cod');
@@ -29,7 +30,36 @@ const Checkout = () => {
           setError,
           formErrors,
           formState: { errors },
-        } = useForm()
+        } = useForm({
+            
+                     defaultValues: async () => {
+                       setLoading(true);
+                      const res = await fetch(`${apiUrl}/get-profile-detail`, {
+                      method: 'GET',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json',
+                          'Authorization': `Bearer ${userToken()}`
+                      }
+                  });
+                  setLoading(false);
+                  const result = await res.json();
+          
+                  if (result.data) {
+                      return {
+                          name: result.data.name,
+                          email: result.data.email,
+                          address: result.data.address,
+                          state: result.data.state,
+                          city: result.data.city,
+                          zip: result.data.zip,
+                          mobile: result.data.mobile,
+                      };
+                       
+                  }
+                  return {}; 
+              }
+          });
 
         const saveOrder = async (orderData,Payment_status) => {
             setLoading(true);
@@ -88,7 +118,11 @@ const Checkout = () => {
                     </nav>
                 </div>
             </div>
-              <form action={handleSubmit(ProccessOrder)}>
+            {
+                loading ==  true && <Loader/>
+            }
+            {
+                loading == false && <form action={handleSubmit(ProccessOrder)}>
                     <div className="row ">
                     
                         <div className="col-md-7">
@@ -141,7 +175,7 @@ const Checkout = () => {
                                          <input type="text" 
                                         {
                                                 ... register('city',{
-                                                    required:'The email is required'
+                                                    required:'The city is required'
                                                 })
                                             }
                                         className={`form-control ${errors.city && 'is-invalid'}`} placeholder='City'/>
@@ -264,6 +298,8 @@ const Checkout = () => {
                     </div>
                     </div>
               </form>
+            }
+              
         </div>
     </Layout>
   )
