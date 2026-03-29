@@ -44,6 +44,10 @@ export const CartProvider  = ({children}) =>{
            setCartData(UpdateData)
         localStorage.setItem('cart',JSON.stringify(UpdateData))
     }
+    const clearCart = () => {
+    setCartData([]); // Set state to empty array
+    localStorage.removeItem('cart'); // Remove from storage
+};
       const shipping = () =>{
             let shipping_Cost = 0;
             cartData.map(item =>(
@@ -89,7 +93,7 @@ export const CartProvider  = ({children}) =>{
                }) 
         })
     return (
-        <CartContext.Provider value={{addToCart,cartData,shipping,SubTotal,GrandTotal,updateItem,deleteItem,getQty}}>
+        <CartContext.Provider value={{addToCart,cartData,shipping,SubTotal,GrandTotal,updateItem,deleteItem,getQty,clearCart}}>
             {children}
         </CartContext.Provider>
     )

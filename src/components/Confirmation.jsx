@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { CartContext } from './context/Cart';
 
 const Confirmation = () => {
-  const {updateItem} = useContext(CartContext);
+  const {updateItem,clearCart} = useContext(CartContext);
   const [order,setOrder] = useState(null);
   const [loading,setLoading] = useState(false);
   const params = useParams();
@@ -26,10 +26,7 @@ const Confirmation = () => {
                if (result.status === 200) {
                   setLoading(false);
                    setOrder(result.data);
-                   console.log(result.data);
-                   console.log(`id : ${result.data.id}, qty : ${result.data.items.qty}`);
-                   updateItem(result.data.items[0].id, 0);
-                   localStorage.removeItem('cart');
+                   clearCart();
                    
                } else {
                 setLoading(false);
