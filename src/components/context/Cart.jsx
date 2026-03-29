@@ -1,8 +1,10 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import { adminToken, apiUrl } from "../common/http";
 
 export const CartContext = createContext();
 export const CartProvider  = ({children}) =>{
     const [cartData,setCartData] = useState(JSON.parse(localStorage.getItem('cart')) || [])
+    const [shippingCost,setShippingCost] = useState(0);
 
    const addToCart = (product, size = null) => {
     let UpdatedCart = [...cartData];
@@ -43,7 +45,11 @@ export const CartProvider  = ({children}) =>{
         localStorage.setItem('cart',JSON.stringify(UpdateData))
     }
       const shipping = () =>{
-            return 5;
+            let shipping_Cost = 0;
+            cartData.map(item =>(
+                shipping_Cost += item.qty * shippingCost
+            ))
+            return shipping_Cost;
         }
      const SubTotal = () =>{
             let subTotal = 0;
@@ -63,6 +69,25 @@ export const CartProvider  = ({children}) =>{
        const getQty = () => {
             return cartData.reduce((total, item) => total + parseInt(item.qty || 0), 0);
         };
+        useEffect(()=>{
+            fetch(`${apiUrl}/get-shipping-front`,{
+                        'method':'GET',
+                        'headers':{
+                            'Content-Type':'application/json',
+                            'Accept':'application/json',
+                            'Authorization':`Bearer ${adminToken()}`
+                        },
+                           
+                        }).then(res =>res.json())
+                        .then(result => {
+                        if(result.status == 200){
+                            
+                            setShippingCost(result.data.amount);
+                        }
+                        else
+                            console.log("something went wrong!");
+               }) 
+        })
     return (
         <CartContext.Provider value={{addToCart,cartData,shipping,SubTotal,GrandTotal,updateItem,deleteItem,getQty}}>
             {children}

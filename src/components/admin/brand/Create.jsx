@@ -18,7 +18,7 @@ const Create = () => {
     const saveCategory = async (data) =>{
         console.log(data);
         setLoading(true);
-        const res =  await fetch(`${apiUrl}/categories`,{
+        const res =  await fetch(`${apiUrl}/brands`,{
             'method':'POST',
             'headers':{
                 'Content-Type':'application/json',

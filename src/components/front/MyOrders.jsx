@@ -80,7 +80,7 @@ const MyOrders = () => {
                         <tr key={order.id}>
                       <td><Link to={`/account/orders/detail/${order.id}`}>{order.id}</Link></td>
                       <td>{order.name}</td>
-                      <td>{order.email}</td>q
+                      <td>{order.email}</td>
                       <td>${order.grand_total}</td>
                       <td>{order.created_at}</td>
                       <td>

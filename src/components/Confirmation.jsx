@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Layout from './common/Layout'
 import { useParams } from 'react-router-dom';
 import { apiUrl, userToken } from './common/http';
 import { toast } from 'react-toastify';
+import { CartContext } from './context/Cart';
 
 const Confirmation = () => {
+  const {updateItem} = useContext(CartContext);
   const [order,setOrder] = useState(null);
   const [loading,setLoading] = useState(false);
   const params = useParams();
@@ -25,6 +27,10 @@ const Confirmation = () => {
                   setLoading(false);
                    setOrder(result.data);
                    console.log(result.data);
+                   console.log(`id : ${result.data.id}, qty : ${result.data.items.qty}`);
+                   updateItem(result.data.items[0].id, 0);
+                   localStorage.removeItem('cart');
+                   
                } else {
                 setLoading(false);
                    toast.error(result.message);
