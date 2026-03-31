@@ -119,10 +119,13 @@ export const OrderDetail = () => {
                                     </div>
                                 </div>
                                 <div className="col-md-4">
-                                   <div className="py-3">
-                                     <h4 className="text-secondary">Payment Method</h4>
-                                     <p>COD</p>
-                                   </div>
+                                   <div className='mt-2' >
+                                        <strong>Payment Method:</strong><br/>   
+                                            {
+                                                order.payment_method == 'stripe'? <span className="badge bg-success">Stripe</span> : <span className="badge bg-warning">COD</span>
+                                        
+                                        }
+                                    </div>
                                 </div>
 
                             </div>

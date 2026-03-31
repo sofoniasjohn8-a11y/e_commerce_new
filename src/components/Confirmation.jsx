@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Layout from './common/Layout'
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { apiUrl, userToken } from './common/http';
 import { toast } from 'react-toastify';
 import { CartContext } from './context/Cart';
@@ -80,12 +80,13 @@ const Confirmation = () => {
                       {
                         order.status == 'cancelled' &&  <span className="badge bg-danger">{order.status}</span>
                       }
-                      
                       </p>
+                      <div className='mt-2' >
+                        <strong>Payment Method:</strong>
                       {
-                        order.payment_status == 'not paid' && <p><strong>Payment :</strong>Cash on Delivery</p>
+                        order.payment_method == 'stripe'? <span className="badge bg-success">Stripe</span> : <span className="badge bg-warning">COD</span>
                       }
-                      
+                      </div>
                     </div>
                     <div className="col-md-6">
                       <p><strong>Customer :</strong>{order.name}</p>
@@ -136,8 +137,8 @@ const Confirmation = () => {
                       </table>
                     </div>
                     <div className="text-center">
-                      <button className="btn btn-primary">View Order Details</button>
-                      <button className="btn btn-outline-secondary ms-2">Continue Shopping</button>
+                      <Link to={`/account/orders/detail/${params.id}`} className="btn btn-primary">View Order Details</Link>
+                      <Link to="/shop" className="btn btn-outline-secondary ms-2">Continue Shopping</Link>
                     </div>
                   </div>
                 </div>
