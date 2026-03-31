@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Router, Routes } from 'react-router-dom'
 import Home from './components/Home'
 import Shop from './components/Shop'
 import Register from './components/Register'
+import {default as UserChangePassword} from './components/ChangePassword'
 import {default as UserLogin} from './components/Login'
 
 import Product from './components/Product'
@@ -33,6 +34,8 @@ import ShowDetails from './components/admin/order/ShowDetails'
 import MyOrders from './components/front/MyOrders'
 import { OrderDetail } from './components/front/OrderDetail'
 import Shipping from './components/admin/shipping/Shipping'
+import ChangePassword from './components/admin/changePassword/ChangePassword'
+
 
 
 
@@ -64,6 +67,10 @@ function App() {
         <Route path='/account/orders/detail/:id' element={
         <RequireAuth>
            <OrderDetail/>
+        </RequireAuth>}/>
+        <Route path='/account/change-password' element={
+        <RequireAuth>
+           <UserChangePassword/>
         </RequireAuth>}/>
         <Route path='/checkout' element={
         <RequireAuth>
@@ -127,6 +134,10 @@ function App() {
         <Route path='/admin/shipping' element={
         <AdminRequireAuth>
             <Shipping/>
+        </AdminRequireAuth>}/>
+        <Route path='/admin/change-password' element={
+        <AdminRequireAuth>
+            <ChangePassword/>
         </AdminRequireAuth>}/>
       {/* <Route path='/admin/categories/edit/:id' element={
         <AdminRequireAuth>

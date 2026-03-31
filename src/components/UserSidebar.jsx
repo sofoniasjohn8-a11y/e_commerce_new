@@ -15,7 +15,7 @@ const UserSidebar = () => {
                       <Link to="/account/orders">Orders</Link>
                     </li>
                     <li>
-                      <Link to="#">Change Password</Link>
+                      <Link to="/account/change-password">Change Password</Link>
                     </li>
                      <li>
                       <a href="#" onClick={logout} >Logout</a>
