@@ -14,7 +14,7 @@ import ProductImgOne from '../assets/images/Mens/fivee.jpg'
 import ProductImgTwo from '../assets/images/Mens/six.jpg'
 import ProductImgThree from '../assets/images/Mens/seven.jpg'
 import { toast } from 'react-toastify';
-import { adminToken, apiUrl } from './common/http.jsx';
+import { apiUrl } from './common/http.jsx';
 import { CartContext } from './context/Cart.jsx';
 
 
@@ -52,8 +52,7 @@ const Product = () => {
                     'method': 'GET',
                     'headers': {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'Authorization': `Bearer ${adminToken()}`
+                        'Accept': 'application/json'
                     }
                 });
                 const result = await res.json();

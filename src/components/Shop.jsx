@@ -3,7 +3,7 @@ import Layout from './common/Layout'
 import productImg1 from '../assets/images/eight.jpg'
 import { Link, useSearchParams } from 'react-router-dom'
 import { toast } from 'react-toastify';
-import { adminToken, apiUrl } from './common/http';
+import { apiUrl } from './common/http';
 
 const Shop = () => {
     const [categories,setCategories] = useState();
@@ -29,7 +29,6 @@ const Shop = () => {
             'headers': {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': `Bearer ${adminToken()}`
             }
         });
         const result = await res.json();
@@ -73,7 +72,6 @@ const Shop = () => {
             'headers': {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': `Bearer ${adminToken()}`
             }
         });
         const result = await res.json();
@@ -101,7 +99,6 @@ const Shop = () => {
             'headers': {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': `Bearer ${adminToken()}`
             }
         });
         const result = await res.json();
