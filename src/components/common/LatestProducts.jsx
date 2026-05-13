@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import productImg1 from '../../assets/images/eight.jpg'
-import { adminToken, apiUrl } from './http';
+import { apiUrl } from './http';
 import { toast } from 'react-toastify';
 
 const LatestProducts = () => {
@@ -11,8 +11,7 @@ const LatestProducts = () => {
                           'method': 'GET',
                           'headers': {
                               'Content-Type': 'application/json',
-                              'Accept': 'application/json',
-                              'Authorization': `Bearer ${adminToken()}`
+                              'Accept': 'application/json'
                           }
                       });
                       const result = await res.json();
